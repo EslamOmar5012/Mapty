@@ -20,14 +20,34 @@ if (navigator.geolocation) {
       );
 
       const map = L.map('map').setView([latitude, longitude], 17);
+
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution:
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(map);
 
-      const marker = L.marker([latitude, longitude])
-        .bindPopup('<b>≈ Current location</b>')
-        .addTo(map);
+      const addMarker = function (lat, lng, popup) {
+        L.marker([lat, lng])
+          .addTo(map)
+          .bindPopup(
+            L.popup({
+              maxWidth: 250,
+              maxHeight: 100,
+              autoClose: false,
+              closeOnClick: false,
+              className: 'running-popup',
+            })
+          )
+          .setPopupContent(popup)
+          .openPopup();
+      };
+
+      addMarker(latitude, longitude, `<b>≈ Current location</b>`);
+
+      map.on('click', e => {
+        const { lat, lng } = e.latlng;
+        addMarker(lat, lng, `<b>${lat} , ${lng}</b>`);
+      });
     },
     error => {
       if (error.code === 1) {
