@@ -11,6 +11,7 @@ const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
 
+let mapEvent, addMarker;
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(
     position => {
@@ -26,27 +27,27 @@ if (navigator.geolocation) {
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(map);
 
-      const addMarker = function (lat, lng, popup) {
+      addMarker = function (lat, lng, popup, className) {
         L.marker([lat, lng])
           .addTo(map)
           .bindPopup(
             L.popup({
               maxWidth: 250,
+              minWidth: 100,
               maxHeight: 100,
               autoClose: false,
               closeOnClick: false,
-              className: 'running-popup',
+              className: className,
             })
           )
           .setPopupContent(popup)
           .openPopup();
       };
 
-      addMarker(latitude, longitude, `<b>≈ Current location</b>`);
-
       map.on('click', e => {
-        const { lat, lng } = e.latlng;
-        addMarker(lat, lng, `<b>${lat} , ${lng}</b>`);
+        mapEvent = e;
+        form.classList.remove('hidden');
+        inputDistance.focus();
       });
     },
     error => {
@@ -64,3 +65,16 @@ if (navigator.geolocation) {
 } else {
   console.error('Geolocation is not supported by this browser.');
 }
+
+form.addEventListener('submit', function (e) {
+  e.preventDefault();
+  const { lat, lng } = mapEvent.latlng;
+  addMarker(lat, lng, 'Workout', 'running-popup');
+  inputDistance.value = inputCadence.value = inputDuration.value = '';
+});
+
+inputType.addEventListener('change', function (e) {
+  e.preventDefault();
+  inputCadence.parentElement.classList.toggle('form__row--hidden');
+  inputElevation.parentElement.classList.toggle('form__row--hidden');
+});
