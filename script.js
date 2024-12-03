@@ -11,9 +11,47 @@ const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
 
+class Workout {
+  id = Number(new Date()).toString().slice(-5);
+  date = new Date();
+  constructor(coords, distance, duration) {
+    this.coords = coords;
+    this.distance = distance; //in Km
+    this.duration = duration; //in Min
+  }
+}
+
+class Running extends Workout {
+  constructor(coords, distance, duration, cedence) {
+    super(coords, distance, duration);
+    this.cedence = cedence;
+    this.calcPace();
+  }
+
+  calcPace() {
+    //min/km
+    this.pace = this.duration / this.distance;
+  }
+}
+
+class Cycling extends Workout {
+  constructor(coords, distance, duration, elevationGain) {
+    super(coords, distance, duration);
+    this.elevationGain = elevationGain;
+    this.calcSpeed();
+  }
+
+  calcSpeed() {
+    this.speed = this.distance / (this.duration / 60);
+  }
+}
+
+///////////////////////////////////////////////////////////////////////
+// APPLICATION ARCHITECTURE
 class App {
   #map;
   #mapEvent;
+  #workouts = [];
   constructor() {
     this._getPosition();
     form.addEventListener('submit', this._newWorkout.bind(this));
@@ -45,7 +83,12 @@ class App {
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(this.#map);
 
-    this._addMarker(latitude, longitude, `<p>Workout</p>`, 'running-popup');
+    this._addMarker(
+      latitude,
+      longitude,
+      `<p>~YourLocation</p>`,
+      'running-popup'
+    );
 
     this.#map.on('click', this._showForm.bind(this));
   }
@@ -63,12 +106,65 @@ class App {
   }
 
   _newWorkout(e) {
+    const validInput = (...inputs) => inputs.every(el => !isNaN(el));
+    const positiveInput = (...inputs) => inputs.every(el => el > 0);
     e.preventDefault();
+
+    //get data from th form
     const { lat, lng } = this.#mapEvent.latlng;
-    this._addMarker(lat, lng, 'Workout', 'running-popup');
+    const type = inputType.value;
+    const distance = Number(inputDistance.value) || NaN;
+    const duration = Number(inputDuration.value) || NaN;
+    let workout, className;
+
+    //If activity is cycling, create cycling object
+    if (type === 'running') {
+      const cadence = Number(inputCadence.value) || NaN;
+      //check if data is valid
+      if (
+        !validInput(distance, duration, cadence) ||
+        !positiveInput(distance, duration, cadence)
+      )
+        return alert('Inputs have to be positive numbers');
+
+      workout = new Running([lat, lng], distance, duration, cadence);
+
+      className = 'running';
+    }
+
+    //If activity is running, create running object
+    if (type === 'cycling') {
+      const elevation = Number(inputElevation.value) || NaN;
+      //check if data is valid
+      if (
+        !validInput(distance, duration, elevation) ||
+        !positiveInput(distance, duration)
+      )
+        return alert('Inputs have to be positive numbers');
+
+      workout = new Cycling([lat, lng], distance, duration, elevation);
+
+      className = 'cycling';
+    }
+
+    //add new object to workout array
+    this.#workouts.push(workout);
+    console.log(this.#workouts);
+
+    //render workout map as a marker
+    this._addMarker(
+      ...workout.coords,
+      `${workout.distance.toString()} Km`,
+      `${className}-popup`
+    );
+
+    //render worout as a list
+
+    //hide form + clear input fields
     inputDistance.value = inputCadence.value = inputDuration.value = '';
   }
 
+  //display marker
   _addMarker(lat, lng, popup, className) {
     L.marker([lat, lng])
       .addTo(this.#map)
@@ -88,70 +184,3 @@ class App {
 }
 
 const app = new App();
-
-// if (navigator.geolocation) {
-//   navigator.geolocation.getCurrentPosition(
-//     position => {
-//       const { latitude, longitude, accuracy } = position.coords;
-//       console.log(
-//         `Latitude: ${latitude}, Longitude: ${longitude}, Accuracy: ${accuracy} meters`
-//       );
-
-//       const map = L.map('map').setView([latitude, longitude], 17);
-
-//       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-//         attribution:
-//           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-//       }).addTo(map);
-
-//       addMarker = function (lat, lng, popup, className) {
-//         L.marker([lat, lng])
-//           .addTo(map)
-//           .bindPopup(
-//             L.popup({
-//               maxWidth: 250,
-//               minWidth: 100,
-//               maxHeight: 100,
-//               autoClose: false,
-//               closeOnClick: false,
-//               className: className,
-//             })
-//           )
-//           .setPopupContent(popup)
-//           .openPopup();
-//       };
-
-//       map.on('click', e => {
-//         mapEvent = e;
-//         form.classList.remove('hidden');
-//         inputDistance.focus();
-//       });
-//     },
-//     error => {
-//       if (error.code === 1) {
-//         alert('We want your permission');
-//       }
-//       console.error(`Error (${error.code}): ${error.message}`);
-//     },
-//     {
-//       enableHighAccuracy: true, // Requests more accurate results
-//       timeout: 100000, // Timeout in milliseconds
-//       maximumAge: 0, // No cached results
-//     }
-//   );
-// } else {
-//   console.error('Geolocation is not supported by this browser.');
-// }
-
-// form.addEventListener('submit', function (e) {
-//   e.preventDefault();
-//   const { lat, lng } = mapEvent.latlng;
-//   addMarker(lat, lng, 'Workout', 'running-popup');
-//   inputDistance.value = inputCadence.value = inputDuration.value = '';
-// });
-
-// inputType.addEventListener('change', function (e) {
-//   e.preventDefault();
-//   inputCadence.parentElement.classList.toggle('form__row--hidden');
-//   inputElevation.parentElement.classList.toggle('form__row--hidden');
-// });
