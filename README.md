@@ -38,7 +38,7 @@ cd Mapty
 open index.html  # or just drag it into your browser
 ```
 
-📚 Project Overview
+## 📚 Project Overview
 Mapty is a simple app where you can:
 
 Click on the map to add a workout (run or cycle)
@@ -59,7 +59,10 @@ This app was built while learning advanced JS concepts like:
 
 ✅ Third-party API Integration (Leaflet)
 
-📦 Future Improvements
+
+
+## 📦 Future Improvements
+
 ✅ Edit/delete workouts
 
 🏷️ Add categories/tags
