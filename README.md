@@ -7,8 +7,7 @@
 
 ---
 
-## ✨ Features
-
+## ✨ Features  
 - 🗺️ **Map Integration** with Leaflet.js  
 - 🏃 **Add Running or Cycling Workouts**  
 - 📍 Automatically gets your location  
@@ -18,8 +17,7 @@
 
 ---
 
-## 🛠️ Technologies Used
-
+## 🛠️ Technologies Used  
 - 🧱 HTML5  
 - 🎨 CSS3  
 - ⚙️ JavaScript (ES6)  
@@ -28,50 +26,35 @@
 
 ---
 
-## 🚀 Getting Started
-
-To run this project locally:
-
+## 🚀 Getting Started  
 ```bash
 git clone https://github.com/EslamOmar5012/Mapty.git
 cd Mapty
 open index.html  # or just drag it into your browser
 ```
 
-## 📚 Project Overview
-Mapty is a simple app where you can:
+## 📚 Project Overview  
+Mapty is a simple app where you can:  
+- Click on the map to add a workout (run or cycle)  
+- Enter workout details like distance and duration  
+- See workouts listed in a sidebar  
+- Click a workout to move the map to its location  
 
-Click on the map to add a workout (run or cycle)
+This app was built while learning advanced JS concepts like:  
+✅ Object-Oriented Programming (OOP)  
+✅ Classes & Inheritance  
+✅ Private Fields and Methods  
+✅ Third-party API Integration (Leaflet)  
 
-Enter workout details like distance and duration
+---
 
-See workouts listed in a sidebar
+## 📦 Future Improvements  
+✅ Edit/delete workouts  
+🏷️ Add categories/tags  
+📊 Add statistics dashboard  
+🧭 Add GPS route tracking  
 
-Click a workout to move the map to its location
+---
 
-This app was built while learning advanced JS concepts like:
-
-✅ Object-Oriented Programming (OOP)
-
-✅ Classes & Inheritance
-
-✅ Private Fields and Methods
-
-✅ Third-party API Integration (Leaflet)
-
-
-
-## 📦 Future Improvements
-
-✅ Edit/delete workouts
-
-🏷️ Add categories/tags
-
-📊 Add statistics dashboard
-
-🧭 Add GPS route tracking
-
-🙋‍♂️ Author
-Made with ❤️ by Eslam Omar
-
-
+🙋‍♂️ **Author**  
+Made with ❤️ by [Eslam Omar](https://github.com/EslamOmar5012)
